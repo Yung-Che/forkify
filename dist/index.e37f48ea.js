@@ -538,12 +538,16 @@ var _resultsViewJsDefault = parcelHelpers.interopDefault(_resultsViewJs);
 var _paginationViewJs = require("./views/paginationView.js");
 var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
 var _runtime = require("regenerator-runtime/runtime");
-if (module.hot) module.hot.accept();
+// if (module.hot) {
+//   module.hot.accept();
+// }
 const controlRecipes = async function() {
     try {
         const id = window.location.hash.slice(1);
         if (!id) return;
         _recipeViewJsDefault.default.renderSpinner();
+        // 0) Update results views to mark selected search result
+        _resultsViewJsDefault.default.update(_modelJs.getSearchResultsPage());
         // 1) Loading recipe
         await _modelJs.loadRecipe(id);
         // 2) Rendering recipe
@@ -579,7 +583,8 @@ const controlServings = function(newServings) {
     // Update the recipe servings (in state)
     _modelJs.updateServings(newServings);
     // Update the recipe view
-    _recipeViewJsDefault.default.render(_modelJs.state.recipe);
+    // recipeView.render(model.state.recipe);
+    _recipeViewJsDefault.default.update(_modelJs.state.recipe);
 };
 const init = function() {
     _recipeViewJsDefault.default.addHandlerRender(controlRecipes);
@@ -2804,6 +2809,23 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    update(data) {
+        this._data = data;
+        const newMarkup = this._generateMarkup();
+        const newDOM = document.createRange().createContextualFragment(newMarkup);
+        const newElements = Array.from(newDOM.querySelectorAll('*'));
+        const curElements = Array.from(this._parentElement.querySelectorAll('*'));
+        newElements.forEach((newEl, i)=>{
+            const curEl = curElements[i];
+            // console.log(curEl, newEl.isEqualNode(curEl));
+            // Updates changed TEXT
+            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') // console.log('💥', newEl.firstChild.nodeValue.trim());
+            curEl.textContent = newEl.textContent;
+            // Updates changed ATTRIBUES
+            if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>curEl.setAttribute(attr.name, attr.value)
+            );
+        });
+    }
     _clear() {
         this._parentElement.innerHTML = '';
     }
@@ -2888,9 +2910,10 @@ class ResultsView extends _viewJsDefault.default {
         return this._data.map(this._generateMarkupPreview).join('');
     }
     _generateMarkupPreview(result) {
+        const id = window.location.hash.slice(1);
         return `
       <li class="preview">
-        <a class="preview__link" href="#${result.id}">
+        <a class="preview__link ${result.id === id ? 'preview__link--active' : ''}" href="#${result.id}">
           <figure class="preview__fig">
             <img src="${result.image}" alt="${result.title}" />
           </figure>
