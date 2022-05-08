@@ -2388,7 +2388,10 @@ const loadSearchResults = async function(query) {
                 id: rec.id,
                 title: rec.title,
                 publisher: rec.publisher,
-                image: rec.image_url
+                image: rec.image_url,
+                ...rec.key && {
+                    key: rec.key
+                }
             };
         });
         state.search.page = 1;
@@ -2440,7 +2443,9 @@ const uploadRecipe = async function(newRecipe) {
     try {
         const ingredients = Object.entries(newRecipe).filter((entry)=>entry[0].startsWith('ingredient') && entry[1] !== ''
         ).map((ing)=>{
-            const ingArr = ing[1].replaceAll(' ', '').split(',');
+            const ingArr = ing[1].split(',').map((el)=>el.trim()
+            );
+            // const ingArr = ing[1].replaceAll(' ', '').split(',');
             if (ingArr.length !== 3) throw new Error('Wrong ingredient format! Please use the correct format 😊');
             const [quantity, unit, description] = ingArr;
             return {
@@ -2625,7 +2630,10 @@ class RecipeView extends _viewJsDefault.default {
               </div>
             </div>
 
-            <div class="recipe__user-generated">
+            <div class="recipe__user-generated ${this._data.key ? '' : 'hidden'}">
+              <svg>
+                <use href="${_iconsSvgDefault.default}#icon-user"></use>
+              </svg>
             </div>
             <button class="btn--round btn--bookmark">
               <svg class="">
@@ -3107,6 +3115,11 @@ class PreviewView extends _viewJsDefault.default {
           <div class="preview__data">
             <h4 class="preview__title">${this._data.title}</h4>
             <p class="preview__publisher">${this._data.publisher}</p>
+            <div class="preview__user-generated ${this._data.key ? '' : 'hidden'}">
+            <svg>
+            <use href="${_iconsSvgDefault.default}#icon-user"></use>
+            </svg>
+            </div>
           </div>
         </a>
       </li>
