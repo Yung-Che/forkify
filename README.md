@@ -6,7 +6,7 @@ https://grand-semifreddo-f7a51a.netlify.app/
 
 ## Description
 Forkify is a recipe finding web application which uses data from the Forkify API.  
-While it is a fairly basic web application, it can be used as a guide to cook one's favorite dish. 
+While it is a fairly basic web application, it can be used as a guide to cook one's favorite dish.  
 There are only a limited number of queries that can be searched for - [Possible searches](https://forkify-api.herokuapp.com/phrases.html) 
 
 ## Installation
