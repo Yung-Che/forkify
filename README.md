@@ -11,7 +11,7 @@ There are only a limited number of queries that can be searched for - [Possible 
 
 ## Installation
 ```
-git clone https://github.com/Yung-Che/expense-tracker.git
+git clone https://github.com/Yung-Che/forkify.git
 ```
 ```
 npm i
